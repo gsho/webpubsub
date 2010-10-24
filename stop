@@ -1,0 +1,50 @@
+#!/bin/sh
+# stop webmq server
+
+cd `dirname $0`
+
+HOST_NAME=`hostname`
+
+SEARCH_STR_FLAG=" -Dapplication.name=webmq-server"
+
+stop(){
+    WEBMQ_SERVER_JAVA_PID=`get_pid`
+    if [ ! -z "$WEBMQ_SERVER_JAVA_PID" ] ; then
+	/bin/kill $WEBMQ_SERVER_JAVA_PID
+        WEBMQ_SERVER_JAVA_PID=`get_pid`
+        exptime=1
+        while true
+        do
+            if [ ! -z "$WEBMQ_SERVER_JAVA_PID" ] && [ $exptime -lt 30 ] ; then
+                 ((exptime++))
+                 echo -n -e "\rWaiting webmq server shutdown: $exptime ... pid:$WEBMQ_SERVER_JAVA_PID, "
+                 sleep 1
+                 WEBMQ_SERVER_JAVA_PID=`get_pid`
+            else
+                 break;
+            fi
+        done
+
+	WEBMQ_SERVER_JAVA_PID=`get_pid`
+        if [ ! -z "$WEBMQ_SERVER_JAVA_PID" ] ; then
+            echo -n -e "\rkill -9 java process $WEBMQ_SERVER_JAVA_PID ..."      
+            /bin/kill -9 $WEBMQ_SERVER_JAVA_PID
+        fi
+    else
+         echo "no java process!"
+    fi
+}
+
+get_pid(){
+    WEBMQ_SERVER_JAVA_PID=`ps --width 1000 auxef|grep "$SEARCH_STR_FLAG"|grep -v grep|awk '{print $2}'`
+    echo $WEBMQ_SERVER_JAVA_PID;
+}
+
+# stop webmq server 
+if (ps -ef|grep "$SEARCH_STR_FLAG"|grep -v grep >/dev/null 2>&1) ; then
+    echo -e "$HOST_NAME: stopping webmq server ... "
+    stop;
+    echo  "        stop success!       "
+else
+    echo "$HOST_NAME: webmq server isn't running!"
+fi
