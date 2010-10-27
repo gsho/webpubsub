@@ -1040,11 +1040,11 @@ ASProxy.prototype =
 		}
 	};
 	// public API start
-	Webmq.prototype.publish = function(destination, message, queue) {
+	Webmq.prototype.publish = function(destination, message, type) {
 		this.checkConnection();
 		var publishCommand = {
 			"domain" : this.domain,
-			"queue" : queue,
+			"queue" : "queue" == type,
 			"destName" : (destination),
 			"message" : (message),
 			"type" : "publish"

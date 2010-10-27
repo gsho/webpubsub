@@ -47,6 +47,8 @@ public class CommandHandler extends PageHandler {
 				.put(Constants.PUBLISH_COMMAND_TYPE, PublishCommand.class);
 		commandMapping.put(Constants.SUBSCIBE_COMMAND_TYPE,
 				SubscibeCommand.class);
+		commandMapping.put(Constants.UNSUBSCIBE_COMMAND_TYPE,
+				SubscibeCommand.class);
 		commandMapping.put(Constants.CLOSE_COMMAND_TYPE, CloseCommand.class);
 	}
 
